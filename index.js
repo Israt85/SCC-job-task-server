@@ -31,8 +31,19 @@ async function run() {
     await client.connect();
     const database= client.db('TaskDB')
     const taskCollection = database.collection('taskCollection')
+    const userCollection = database.collection('userCollection')
 
 
+    app.post('/users', async(req,res)=>{
+      const user = req.body
+      const query = {email: user.email}
+      const existingUser = await userCollection.findOne(query)
+      if (existingUser) {
+          return res.send({ message: 'user already in', insertedId: null })
+      }
+      const result = await userCollection.insertOne(user)
+      res.send(result)
+    })
 
     app.get('/task', async(req,res)=>{
       const result = await taskCollection.find().toArray()
