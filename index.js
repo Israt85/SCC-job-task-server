@@ -28,7 +28,7 @@ async function run() {
   
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
     const database= client.db('TaskDB')
     const taskCollection = database.collection('taskCollection')
     const userCollection = database.collection('userCollection')
@@ -58,52 +58,26 @@ async function run() {
         res.send(result)
 
     })
-    app.put('/task/:id', async (req, res) => {
-      try {
-        const id = req.params.id;
-        console.log('req',req.params);
-        console.log("Task ID:", id);
-        
-        const updatedTask = req.body;
-        console.log("Updated Task:", updatedTask);
-        
-        const filter = { _id: new ObjectId(id) };
-        const update = {
-          $set: {
-            ...updatedTask
+    
+    
+    app.put('/task/:id', async(req,res)=>{
+      const id = req.params.id
+      console.log("id", id);
+      const updatedTask = req.body
+      console.log(updatedTask);
+       const filter = {_id : new ObjectId(id)}
+       const update= {
+          $set:{
+              ...updatedTask
           }
-        };
-    
-        const result = await taskCollection.updateOne(filter, update, {
+       }
+       const result = await taskCollection.updateOne(filter,update,{
           upsert: true
-        });
-    
-        console.log("Update Result:", result);
-    
-        res.send(result);
-      } catch (error) {
-        console.error('Error updating task:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
-      }
-    });
-    
-  //   app.put('/task/:id', async(req,res)=>{
-  //     const id = req.params.id
-  //     console.log("id", id);
-  //     const updatedTask = req.body
-  //     console.log(updatedTask);
-  //      const filter = {_id : new ObjectId(id)}
-  //      const update= {
-  //         $set:{
-  //             ...updatedTask
-  //         }
-  //      }
-  //      const result = await taskCollection.updateOne(filter,update,{
-  //         upsert: true
-  //      })
-  //      res.send(result)
+       })
+       res.send(result)
   
-  // })
+  })
+
     app.delete('/task/:id', async(req,res)=>{
         const id = req.params.id
         const query = {_id : new ObjectId(id)}
